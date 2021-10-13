@@ -9,3 +9,5 @@
 [Click here to my Assignment 4](fa2021_assignment4.html)
 
 [Click here to my Assignment 5](fa2021_assignment5.html)
+
+[Click here to my Assignment 6](fa2021_assignment6.html)
