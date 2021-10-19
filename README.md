@@ -11,3 +11,5 @@
 [Click here to my Assignment 5](fa2021_assignment5.html)
 
 [Click here to my Assignment 6](fa2021_assignment6.html)
+
+[Click here to my Assignment 7](fa2021_assignment7.html)
