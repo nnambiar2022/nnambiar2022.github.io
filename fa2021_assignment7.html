@@ -1,0 +1,193 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 7: Visualization - Some aspects of ggplot2"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](fa2021_assignment7.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+-------
+
+### I. Questions on Your Selected Data
+
+Use the data of your own.  Produce the following types of plots and comment on each plot. Plots should be meaningful. If you use the data we used in class, make sure the plots are not the same as the ones in the slides. All plots should have title, caption, appropriate labels on x and y-axis. 
+
+The data set I am using focuses on medical costs and insurance data. I got this data set from Kaggle. 
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(lubridate)
+
+df <- read_csv('C:/Users/student/Downloads/insurance.csv')
+
+head(df)
+```
+
+-------
+
+1. Make a plot using `face_wrap` by one categorical variable (`face_wrap(~variable1)`)
+```{r}
+df %>% filter(region=='northeast'|region=='northwest'|region=='southeast'|region== 'southwest') %>% 
+  ggplot(mapping=aes(x=age, y=charges)) + geom_point() + 
+  geom_smooth() + facet_wrap(~sex)
+```
+
+2. Make a plot using `face_wrap` by two categorical variables (`face_wrap(variable1~variable2)`)
+```{r}
+df %>% filter(region=='northeast'|region=='northwest'|region=='southeast'|region== 'southwest') %>% 
+  ggplot(mapping=aes(x=age, y=charges)) + geom_point() + 
+  geom_smooth() + facet_wrap(sex~smoker)
+```
+
+
+3. Make a plot using `position ='jitter'`.
+```{r}
+df %>% filter(region=='northeast') %>% ggplot + 
+  geom_point(mapping = aes(x=age, y=bmi, color=sex), 
+             position='jitter')
+```
+
+
+4. Make a plot using `position ='dodge'`.
+```{r}
+df %>% filter(region=='northeast') %>% ggplot()+geom_bar(mapping=aes(x=smoker, fill=sex), position = 'dodge')
+```
+
+
+5. Make a plot using `position ='fill'`. 
+```{r}
+df %>% filter(region=='northeast') %>% ggplot()+geom_bar(mapping=aes(x=smoker, fill=sex), position = 'fill')
+```
+
+
+6. Make a plot using `geom_col`.
+```{r}
+df %>% group_by(children) %>% summarise(average_charges = mean(charges)) %>% ggplot() + geom_col(mapping=aes(x=children, y=average_charges))
+```
+
+
+7. Change the theme of one of your plots. 
+[Revised number 3]
+```{r}
+df %>% filter(region=='northeast'| region=='northwest'|region=='southeast'|region=='southwest') %>% ggplot(mapping=aes(x=age, y=bmi, color=sex)) + geom_point() + geom_smooth() + facet_wrap(~region) + theme_dark()
+```
+
+
+8. Save a plot and put a link of the plot to your Github Webpage.  To link a plot `abc.png` you just need to insert the following on the README.md
+
+```{r, eval=FALSE}
+[Link to the plot](abc.png)
+```
+```{r}
+gg <- df %>% filter(region=='northeast'| region=='northwest'|region=='southeast'|region=='southwest') %>%ggplot(mapping = aes(x=age, y=bmi, color=sex)) + geom_point() + geom_smooth() + facet_wrap(~region)
+
+ggsave(filename = 'abc.png', plot = gg)
+```
+
+
+### II. Questions on Covid Vaccination Data
+
+In this section of questions, we will use  the covid vaccination data for the US. The data and data dictionary can be found at the below link:
+
+- [Data](https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv)
+
+- [Data Dictionary](https://github.com/govex/COVID-19/blob/master/data_tables/vaccine_data/us_data/data_dictionary.csv)
+
+
+```{r}
+library(tidyverse)
+df <- read_csv('https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/us_data/time_series/vaccine_data_us_timeline.csv')
+```
+
+1. Put titles, captions, appropriate labels on x and y-axis for the last two questions in Assignments 6.
+(1)
+```{r}
+library(lubridate)
+df$Date <- ymd(df$Date)
+df$month <- month(df$Date)
+
+df4 <- df %>% filter(Province_State==c('Rhode Island','Massachusetts','Vermont','Connecticut','Maine', 'New Hampshire'), Vaccine_Type==c('All')) %>% group_by(month, Vaccine_Type,Province_State) %>% summarise(vac_admin=mean(Doses_admin, na.rm=TRUE))
+
+df4 %>% ggplot() + geom_line(mapping = aes(x = month, y = vac_admin, color = Province_State)) +
+  labs(x = 'Month',
+       y = 'Number of Administered Vaccines',
+       color = 'State',
+       title = 'Line Chart Showing Number of Administered Vaccines per State',
+       caption = 'Rhode Island seems to show a huge decline in the number of administered vaccines from October to December.')
+```
+
+(2)
+```{r}
+df5 <- df %>% filter(Province_State==c('Rhode Island','Massachusetts','Vermont','Connecticut','Maine', 'New Hampshire'),Vaccine_Type==c('All')) %>% group_by(Date, Vaccine_Type, Province_State) %>% summarise(vac_admin=mean(Doses_admin, na.rm=TRUE)) 
+
+df5 %>% ggplot()+geom_point(mapping = aes(x = Date, y = vac_admin, color = Province_State)) +
+  labs(x = 'Month',
+       y = 'Number of Administered Vaccines',
+       color = 'State',
+       title = 'Scatter Plot of the Number of Administered Vaccines per State',
+       caption = 'Rhode Island seems to be administering the most amount of vaccines over the January to December period.')
+```
+
+
+2. Since the data seems lack of categorical variables, we will create a few categorical variables for easier visualization. From the `Date` variable create three categorical variables to record weekdays, months and quarters. You could also create a categorical variable to record the state regions (South, North East, Midwest, West) or other new categorical variables.
+```{r}
+library(lubridate)
+df$Month = month(df$Date)
+df$Weekday = wday(df$Date)
+df$Quarter = quarter(df$Date)
+```
+
+3. With the updated data after question 2.  Create at least 7 new meaningful graphs.  Your graphs should have titles, captions, appropriate labels on x and y-axis. You should also make use of the follows. 
+
+ - geom_point
+```{r}
+df %>% ggplot() + geom_point(mapping=aes(x=Date, y=Doses_admin)) + labs(title = 'Doses Administered by Date', caption = 'This graph shows the number of COVID vaccination doses administered by Date', x = 'Date', y = 'Doses Administered')
+```
+ 
+ - geom_line
+```{r}
+df %>% ggplot() + geom_line(mapping=aes(x=Date, y=Doses_admin, color = Vaccine_Type)) + labs(title = 'Doses Administered by Date', caption = 'This line graph shows the number of COVID vaccination doses administered by Date', x = 'Date', y = 'Doses Administered')
+```
+ 
+ - geom_smooth
+```{r}
+df %>% ggplot() + geom_smooth(mapping=aes(x=Doses_shipped, y=Doses_alloc)) + labs(title = 'Comparing Doses Shipped versus Doses Allocated', caption = 'This graph shows a comparison between doses shipped and the doses allocated', x = 'Doses Shipped', y = 'Doses Allocated')
+```
+ 
+ _ geom_bar
+```{r}
+df %>% ggplot()+ geom_bar(mapping = aes(x = Vaccine_Type)) + labs(title = 'Total Number of Vaccines per Vaccine Type', x = 'Vaccine Type', y = 'Count', caption = 'This bar chart shows the total count of each vaccine type')
+```
+ - geom_col
+```{r}
+df %>% ggplot()+ geom_col(mapping = aes(x = Month, y = Doses_alloc)) + labs(title = 'Number of Doses Allocated per Month', x = 'Month', y = 'Doses Allocated', caption = 'This graph shows the total number of vaccine doses allocated per month')
+```
+ 
+ - face_wrap
+```{r}
+df %>% ggplot(mapping = aes(x = Date, y = Doses_admin)) + geom_point() + geom_smooth() + facet_wrap(~Quarter) + labs(x = 'Date', y = 'Doses Administered', title = 'Vaccine Doses Administered by Quarter using Facet Wrap', caption = 'Date Vs. Doses Administered by Quarters using Facet Wrap')
+```
+ 
+ - combination of geom_point and geom_smooth 
+```{r}
+df %>% ggplot(mapping = aes(x=Doses_admin, y=Stage_Two_Doses)) + geom_point() + geom_smooth() + labs(x = 'Doses Administered', y = 'Second Dose', title = 'Number of Second Vaccine Doses Administered', caption = 'The graph shows how many second vaccine doses were administered in total.')
+```
+ 
