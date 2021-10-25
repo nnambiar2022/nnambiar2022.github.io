@@ -26,12 +26,9 @@ knitr::opts_chunk$set(message = FALSE)
 
 -------
 
-1. Install two packages `gganimate` and `gifski` then restart Rstudio. Use the WHO's dataset at [this link](https://covid19.who.int/WHO-COVID-19-global-data.csv). Make a top-10 bar race by months between countries on the number of deaths by Covid 19.  
-```{r}
-install.packages("gganimate")
-install.packages("gifski")
-install.packages("gapminder")
+1. Install two packages `gganimate` and `gifski` then restart Rstudio. Use the WHO's dataset at [this link](https://covid19.who.int/WHO-COVID-19-global-data.csv). Make a top-10 bar race by months between countries on the number of deaths by Covid 19. 
 
+```{r}
 library(gapminder)
 library(gganimate)
 library(ggplot2)
