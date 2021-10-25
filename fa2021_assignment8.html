@@ -1,0 +1,105 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 8: Visualization - Making a bar race"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](fa2021_assignment8.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+-------
+
+1. Install two packages `gganimate` and `gifski` then restart Rstudio. Use the WHO's dataset at [this link](https://covid19.who.int/WHO-COVID-19-global-data.csv). Make a top-10 bar race by months between countries on the number of deaths by Covid 19.  
+```{r}
+install.packages("gganimate")
+install.packages("gifski")
+install.packages("gapminder")
+
+library(gapminder)
+library(gganimate)
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(knitr)
+```
+```{r}
+df <- read_csv('C:/Users/student/Downloads/WHO-COVID-19-global-data.csv')
+
+head(df)
+names(df)
+```
+```{r}
+df$Month = month(df$Date_reported)
+
+df1 <- df %>% group_by(Month, Country) %>% summarise(mean = mean(Cumulative_deaths))
+df2 <- df1 %>% group_by(Month) %>% mutate(rank=rank(-mean)) %>% ungroup()
+df3 <- df2 %>% filter(rank<=10)
+
+a1 <- df3 %>% ggplot(aes(x=rank, y=mean, group=Country, fill=Country, label=Country)) + geom_col() + geom_text(aes(y=mean, label=Country), hjust = 1.4)+
+  coord_flip(clip = "off", expand = FALSE) +scale_x_reverse()+
+    labs(title = 'Month {closest_state}', x='Country', y='Total Number of Covid Deaths', fill='Country')+
+    theme(plot.title = element_text(hjust = 1, size = 22),
+          axis.ticks.y = element_blank(),
+          axis.text.y  = element_blank()) + 
+    transition_states(Month)+
+    ease_aes("cubic-in-out")
+animate(a1, nframes = 400)
+
+```
+
+
+2. Make another bar race using that dataset.  
+```{r}
+ df <- read_csv('C:/Users/student/Downloads/WHO-COVID-19-global-data.csv')
+
+head(df)
+names(df)
+
+df$month <- month(df$Date_reported)
+```
+```{r}
+d1 <- df %>% filter(Country %in% c('United States of America', 'India')) %>% group_by(month, Country) %>% summarise(mean = mean(New_deaths))
+kable(d1)
+
+p1 <- d1 %>% ggplot(aes(y=mean, x=Country, fill=Country)) + geom_col() + transition_states(month) + labs(x = 'Country', y = 'Average New Covid Deaths', title = 'Month: {closest_state}')
+
+animate(p1, nframes = 200)
+```
+
+
+3. Make a bar race using a dataset of your own interest. You may use the dataset that we use in class (https://covidtracking.com/data/download/all-states-history.csv) but you should make a different bar racev from ones in the slides. 
+```{r}
+d <- read_csv('https://covidtracking.com/data/download/all-states-history.csv')
+
+head(d)
+names(d)
+```
+```{r}
+d$weekday = wday(d$date)
+drop_na(d, hospitalizedCurrently)
+
+d2 <- d %>% filter(state %in% c('ME','VT','NH','MA', 'RI', 'CT', 'NY', 'NJ', 'PA', 'MD', 'DE')) %>% group_by(weekday, state) %>% summarize(mean = mean(hospitalizedCurrently, na.rm=TRUE)) %>% mutate(rank=rank(-mean))
+
+a1 <- d2 %>% ggplot(aes(y=factor(rank), x=mean, group=state, fill=state, label=state)) + geom_col() + geom_text(aes(label = state), hjust=1.4) + transition_states(weekday) + labs(y = 'Rank', x = 'Number of Patients Currently in the Hospital for Covid', title = 'Weekday: {closest_state}', caption = 'This bar race represents the amount of Covid patients currently hospitalized in the Northeast region of the United States')
+
+animate(a1, nframes=100)
+```
+
+
