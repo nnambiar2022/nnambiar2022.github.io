@@ -1,0 +1,206 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 12: Predictive Modeling - Part 3"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](fa2021_assignment12.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Blackboard.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+-------
+
+1. Install the package `mlbench` and use the follows to import the data
+
+```{r}
+library(mlbench)
+data(PimaIndiansDiabetes)
+df <- PimaIndiansDiabetes
+```
+
+- Set seed to be 2020. 
+- The target variable is `diabetes`
+- Partition the data into 80% training and 20% testing.  
+```{r}
+library(tidyverse)
+library(rpart)
+library(caret)
+view(df)
+names(df)
+
+#set the target variable as diabetes
+names(df)[9] <- 'diabetes'
+
+#remove missing values
+df = drop_na(df)
+
+#split the data to train and test 
+set.seed(2020)
+splitIndex <- createDataPartition(df$diabetes, p = .80, list = FALSE)
+df_train <- df[splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+-------
+
+2. Use cross-validation of 30 folds to tune random forest (method='rf').  What is the `mtry` value that produces the greatest accuracy?
+```{r}
+# Decide the range of the maxdepth to search for the best
+tuneGrid = expand.grid(mtry = 1:5)
+# Tell caret to do 10 - fold cross-Validation
+trControl = trainControl(method = "cv",
+                         number = 30)
+# train a forest using above setup
+forest_rf <- train(diabetes~., data=df_train, 
+                                method = "rf", 
+                                trControl = trControl,
+                                tuneGrid = tuneGrid)
+plot(forest_rf)
+```
+The final value used for the model to produce the best accuracy was mtry = 2.
+-------
+
+3. Use cross-validation with of 30 folds to tune random forest (method='ranger').  What are the parameters that produce the greatest accuracy?
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 30)
+tuneGrid = expand.grid(mtry = 1:5,
+                       splitrule = c('gini', 'extratrees'),
+                       min.node.size = c(1:10))
+forest_ranger <- train(diabetes~., data=df_train, 
+                    method = "ranger", 
+                    trControl = trControl,
+                    tuneGrid = tuneGrid)
+plot(forest_ranger)
+```
+The accuracy is the best when the model has an mtry value of 5, splitrule = extratrees, and min.node.size = 8.
+-------
+
+4. Go to https://topepo.github.io/caret/available-models.html and pick a classification model.  Tune the classification model using cross-validation of 30 folds. 
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 30)
+forest_ranger1 <- train(diabetes~., data=df_train, 
+                    method = "glmnet", 
+                    trControl = trControl)
+plot(forest_ranger1)
+```
+For the method 'glmnet', the final values used for the model were alpha = 0.1 and lambda = 0.0004481114.
+-------
+
+5. Pick three models at [this link](https://topepo.github.io/caret/available-models.html) to compare using 15-fold cross validation method. Evaluate the accuracy of the final model on the test data. What is the best model?
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 4)
+
+ada_boost <- train(diabetes~., data=df_train, 
+                                method = "adaboost", 
+                                trControl = trControl)
+boosted_log_reg <- train(diabetes~., data=df_train, 
+                    method = "LogitBoost", 
+                                trControl = trControl)
+lin_disc_analy <- train(diabetes~., data=df_train, 
+                                method = "lda", 
+                                trControl = trControl)
+
+results <- resamples(list('AdaBoost Classification Trees' = ada_boost, 'Boosted Logistic Regression' = boosted_log_reg, 'Linear Discriminant Analysis'= lin_disc_analy))
+
+bwplot(results)
+```
+```{r}
+pred <- predict(ada_boost, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$diabetes, positive = "pos")
+cm$overall[1]
+
+pred <- predict(boosted_log_reg, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$diabetes, positive = "pos")
+cm$overall[1]
+
+pred <- predict(lin_disc_analy, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$diabetes, positive = "pos")
+cm$overall[1]
+```
+Of the three models, the LDA is the best one that produces the highest accuracy score.
+-------
+
+6. Redo Question 5 on this following dataset. 
+
+ - `Adult Census Income` dataset ([Link](https://www.kaggle.com/uciml/adult-census-income)) where the target variable is `income`
+```{r}
+library(tidyverse)
+library(caret)
+
+df1 <- read_csv('C:/Users/student/Documents/Fall 2021/MATH 421/Math421/adult.csv')
+view(df1)
+df1 = drop_na(df1)
+
+set.seed(2020)
+splitIndex <- createDataPartition(df1$income, p = .80, list = FALSE)
+df1_train <- df1[splitIndex,]
+df1_test <- df1[-splitIndex,]
+```
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 2)
+cond_inf_tree <- train(income~., data=df1_train, 
+                                method = "ctree", 
+                                trControl = trControl)
+boosted_log_reg <- train(income~., data=df1_train, 
+                    method = "LogitBoost", 
+                                trControl = trControl)
+gen_lin_mod <- train(income~., data=df1_train, 
+                                method = "glmnet", 
+                                trControl = trControl)
+
+results <- resamples(list('Conditional Inference Tree' = cond_inf_tree, 'Boosted Logistic Regression' = boosted_log_reg, 'GLMNET'= gen_lin_mod))
+
+bwplot(results)
+```
+
+ -  `Credit card default` dataset ([link](https://www.kaggle.com/uciml/default-of-credit-card-clients-dataset)) where the target variable is `default.payment.next.month`
+```{r}
+library(tidyverse)
+library(caret)
+
+a <- read_csv("C:/Users/student/Documents/Fall 2021/MATH 421/Math421/UCI_Credit_Card.csv")
+view(a)
+
+set.seed(2020)
+names(a)[25] <- 'target'
+splitIndex <- createDataPartition(a$target, p = .80, list = FALSE)
+a_train <- a[splitIndex,]
+a_test <- a[-splitIndex,]
+```
+```{r}
+trControl = trainControl(method = "cv",
+                         number = 4)
+knn <- train(target~., data=a_train, method = "knn", trControl = trControl)
+
+kknn <- train(target~., data=a_train, method = "kknn", trControl = trControl)
+
+tree <- train(target~., data=a_train, method = "rpart2", trControl = trControl)
+
+results <- resamples(list('KNN' = knn,
+                          'KKNN' = kknn,
+                          'Decision Tree'= tree))
+                          
+bwplot(results)
+```
+
+ 
