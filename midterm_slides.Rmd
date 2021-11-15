@@ -14,43 +14,43 @@ output:
 
 ## Visualization 1
 
-![](graph1.png)
+![](graph1.png){width=70%}
 ---
 
 ## Visualization 2
-![](graph2.png)
+![](graph2.png){width=70%}
 ---
 
 ## Visualization 3
-![](graph3.png)
+![](graph3.png){width=70%}
 ---
 
 ## Visualization 4
-![](graph4.png)
+![](graph4.png){width=70%}
 ---
 
 ## Visualization 5
-![](graph5.png)
+![](graph5.png){width=70%}
 ---
 
 ## Visualization 6
-![](graph6.png)
+![](graph6.png){width=70%}
 ---
 
 ## Visualization 7
-![](graph7.png)
+![](graph7.png){width=70%}
 ---
 
 ## Visualization 8
-![](graph8.png)
+![](graph8.png){width=70%}
 ---
 
 ## Visualization 9
-![](graph9.png)
+![](graph9.png){width=70%}
 ---
 
 ## Visualization 10
-![](graph10.png)
+![](graph10.png){width=70%}
 ---
 
 ## Visualization  11
@@ -65,7 +65,7 @@ output:
 
 - `high` otherwise. 
 
-![](boxplot1.png)
+![](boxplot1.png){width=70%}
 ---
 
 ## Predicting Length of Stay
@@ -74,12 +74,12 @@ output:
 - los < 3, "low"
 - los >= 3, "high"
 
-![](boxplot2.png)
+![](boxplot2.png){width=70%}
 ---
 
 ## Challenges
 
 - Run time for models
 - Some variables were not clear or did not have enough information/values
--adding in images was a challenge
-- Kniting and pushing files to Github
+- Adding in images was a challenge
+- Knitting and pushing files to Github
