@@ -23,3 +23,5 @@
 [Click here to my Assignment 11](fa2021_assignment11.html)
 
 [Click here to my Assignment 12](fa2021_assignment12.html)
+
+[Click here to my Midterm Slides](midterm_slides.html)
