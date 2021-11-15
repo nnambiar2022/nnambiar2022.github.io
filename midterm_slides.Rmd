@@ -1,0 +1,85 @@
+
+---
+title: "Midterm Project"
+author: "Nilanjana Nambiar"
+date: "11/15/21"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Visualization 1
+
+![](graph1.png)
+---
+
+## Visualization 2
+![](graph2.png)
+---
+
+## Visualization 3
+![](graph3.png)
+---
+
+## Visualization 4
+![](graph4.png)
+---
+
+## Visualization 5
+![](graph5.png)
+---
+
+## Visualization 6
+![](graph6.png)
+---
+
+## Visualization 7
+![](graph7.png)
+---
+
+## Visualization 8
+![](graph8.png)
+---
+
+## Visualization 9
+![](graph9.png)
+---
+
+## Visualization 10
+![](graph10.png)
+---
+
+## Visualization  11
+![](animated_graph.gif)
+---
+
+## Prediciting Total Patient Charge
+
+- Target Variable: Total Patient Charge (tot)
+
+-`low` if the total charge of a patient (`tot`) is smaller than the median of the total charge, and
+
+- `high` otherwise. 
+
+![](boxplot1.png)
+---
+
+## Predicting Length of Stay
+
+- I created a binary variable from the los column. I used 3 since that is the median los value.
+- los < 3, "low"
+- los >= 3, "high"
+
+![](boxplot2.png)
+---
+
+## Challenges
+
+- Run time for models
+- Some variables were not clear or did not have enough information/values
+-adding in images was a challenge
+- Kniting and pushing files to Github
