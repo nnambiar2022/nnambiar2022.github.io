@@ -561,4 +561,5 @@ cm$overall[1] #0.8217213
 7. Write a paragraph to summarize the section and give your comments on the results. 
 
 I was a bit disappointed that the accuracy scores I got for my models were not as high. When I tested them out twice with Decision Tree, Random Forest, and KNN, I found that my random forest model worked the best. However, both accuracy scores stayed in the 82% range. Next time I could try and see if it would make any difference for the accuracy scores if I were to try other various types of models and work a bit more with the specifications of each model.
+
 -------
