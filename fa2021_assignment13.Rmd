@@ -97,6 +97,9 @@ df %>%
 
   a. Is movies/TV Shows in the 21st century tends to be more positive than those in 20th century?  Use the sentiment analysis by `Bing` lexicons to address the question. 
 ```{r}
+library(tidyverse)
+library(tidytext)
+library(knitr)
 df %>%
     unnest_tokens(input = description, output = word) %>% 
     anti_join(get_stopwords()) %>% 
