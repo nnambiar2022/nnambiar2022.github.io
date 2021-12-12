@@ -29,3 +29,7 @@
 [Click here to my Midterm](fa2021_midterm_tab.html)
 
 [Click here to my Assignment 13](fa2021_assignment13.html)
+
+[Click here to my Assignment 14](fa2021_assignment14.html)
+
+[Click here to my Assignment 15](fa2021_assignment15.html)
