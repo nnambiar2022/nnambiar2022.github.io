@@ -1,0 +1,22 @@
+---
+title: "Final"
+author: "Nilanjana Nambiar"
+date: "12/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- [Question 2](https://nilanambiar.shinyapps.io/ShinyApp_TitanicQ2/)
+- [Question 3](https://nilanambiar.shinyapps.io/ShinyApp_AdultCensusQ3/)
+- [Question 4](https://nilanjananambiar.shinyapps.io/ShinyApp_AdultCensusQ4/)
+- [Question 5](https://nilanjananambiar.shinyapps.io/ShinyApp_WHOQ5/)
+- [Question 6](https://nilanjananambiar.shinyapps.io/ShinyApp_AdultCensusQ6/)
+- [Question 7](https://nilanjananambiar.shinyapps.io/ShinyApp_AdultCensusQ7/)
+- [Question 8](https://nilanjananambiar.shinyapps.io/Question8/)
+- [Question 9](https://nnambiar.shinyapps.io/Question9/)
+- [Question 10](https://nnambiar.shinyapps.io/Question10/)
+- [Question 11](https://nnambiar.shinyapps.io/Question11/)
+- [Question 12](https://nnambiar.shinyapps.io/Question12/)
